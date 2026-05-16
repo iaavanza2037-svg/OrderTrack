@@ -1,4 +1,4 @@
-import { AppData, Cliente, Pedido, Tienda } from "./types";
+import { AppData, Cliente, Pedido, Tienda } from "../types";
 
 const STORAGE_KEYS = {
   CLIENTES: "pedidosPro_clientes",
