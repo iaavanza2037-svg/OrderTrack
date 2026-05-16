@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useStore } from '../hooks/useStore';
-import { LayoutDashboard, ShoppingCart, Users, Store, Settings, TrendingUp, Package, CheckCircle2, Clock, AlertTriangle, XCircle, List } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Users, Store, Settings, TrendingUp, Package, CheckCircle2, Clock, AlertTriangle, XCircle, List, ArrowUpRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { EstadoPedido } from '../types';
+import { Link } from 'react-router-dom';
 
 export const Dashboard: React.FC = () => {
   const { data } = useStore();
@@ -25,22 +26,29 @@ export const Dashboard: React.FC = () => {
   const metaGoal = 10000; // Meta de ganancia mensual (podría ser configurable)
   const metaProgress = Math.min(Math.round((stats.gananciaRealizada / metaGoal) * 100), 100);
 
-  const StatCard = ({ title, value, icon: Icon, color, trend }: any) => (
-    <div className="bento-card">
-      <div className="flex justify-between items-start mb-3">
-        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{title}</span>
-        <div className={`p-1.5 rounded-lg ${color} bg-opacity-10`}>
-          <Icon className={`w-4 h-4 ${color.replace('bg-', 'text-')}`} />
+  const StatCard = ({ title, value, icon: Icon, color, trend, to }: any) => {
+    const content = (
+      <div className="bento-card group hover:scale-[1.02] transition-all cursor-pointer h-full border-blue-100/0 hover:border-blue-100 active:scale-95">
+        <div className="flex justify-between items-start mb-3">
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{title}</span>
+          <div className="flex items-center gap-1">
+            <div className={`p-1.5 rounded-lg ${color} bg-opacity-10`}>
+              <Icon className={`w-4 h-4 ${color.replace('bg-', 'text-')}`} />
+            </div>
+            {to && <ArrowUpRight className="w-3 h-3 text-slate-300 group-hover:text-blue-500 transition-colors" />}
+          </div>
+        </div>
+        <div className="flex items-end gap-2">
+          <span className="text-3xl font-extrabold text-slate-900 leading-none">
+            {typeof value === 'number' && title.includes('Ganancia') ? `L ${value.toLocaleString()}` : value}
+          </span>
+          {trend && <span className="text-[11px] font-bold text-slate-400 mb-1">{trend}</span>}
         </div>
       </div>
-      <div className="flex items-end gap-2">
-        <span className="text-3xl font-extrabold text-slate-900 leading-none">
-          {typeof value === 'number' && title.includes('Ganancia') ? `L ${value.toLocaleString()}` : value}
-        </span>
-        {trend && <span className="text-[11px] font-bold text-slate-400 mb-1">{trend}</span>}
-      </div>
-    </div>
-  );
+    );
+
+    return to ? <Link to={to} className="block">{content}</Link> : content;
+  };
 
   return (
     <div className="animate-in fade-in duration-500 max-w-7xl mx-auto py-2">
@@ -50,16 +58,16 @@ export const Dashboard: React.FC = () => {
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-        <StatCard title="Total Pedidos" value={stats.total} icon={ShoppingCart} color="bg-blue-600" />
-        <StatCard title="Pendientes" value={stats.pendientes} icon={Clock} color="bg-amber-500" />
-        <StatCard title="Llegaron" value={stats.llegaron} icon={Package} color="bg-indigo-500" />
-        <StatCard title="Entregados" value={stats.entregados} icon={CheckCircle2} color="bg-emerald-500" />
-        <StatCard title="Vencidos" value={stats.vencidos} icon={AlertTriangle} color="bg-rose-500" />
-        <StatCard title="Cancelados" value={stats.cancelados} icon={XCircle} color="bg-slate-500" />
+        <StatCard title="Total Pedidos" value={stats.total} icon={ShoppingCart} color="bg-blue-600" to="/pedidos" />
+        <StatCard title="Pendientes" value={stats.pendientes} icon={Clock} color="bg-amber-500" to="/pedidos" />
+        <StatCard title="Llegaron" value={stats.llegaron} icon={Package} color="bg-indigo-500" to="/pedidos" />
+        <StatCard title="Entregados" value={stats.entregados} icon={CheckCircle2} color="bg-emerald-500" to="/pedidos" />
+        <StatCard title="Vencidos" value={stats.vencidos} icon={AlertTriangle} color="bg-rose-500" to="/pedidos" />
+        <StatCard title="Cancelados" value={stats.cancelados} icon={XCircle} color="bg-slate-500" to="/pedidos" />
         <StatCard title="Ganancia Esp." value={stats.gananciaEsperada} icon={TrendingUp} color="bg-purple-600" />
         <StatCard title="Ganancia Real" value={stats.gananciaRealizada} icon={TrendingUp} color="bg-emerald-600" />
-        <StatCard title="Clientes" value={stats.clientesCount} icon={Users} color="bg-sky-500" />
-        <StatCard title="Tiendas" value={stats.tiendasCount} icon={Store} color="bg-orange-500" />
+        <StatCard title="Clientes" value={stats.clientesCount} icon={Users} color="bg-sky-500" to="/clientes" />
+        <StatCard title="Tiendas" value={stats.tiendasCount} icon={Store} color="bg-orange-500" to="/tiendas" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">

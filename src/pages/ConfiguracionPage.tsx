@@ -12,9 +12,13 @@ export const ConfiguracionPage: React.FC = () => {
   };
 
   const clearAll = () => {
-    if (confirm('¡ADVERTENCIA! Se borrarán todos tus datos de forma permanente. ¿Estás seguro?')) {
-      localStorage.clear();
-      window.location.reload();
+    const firstConfirm = confirm('¡ADVERTENCIA! Se borrarán todos tus datos de forma permanente. ¿Estás seguro?');
+    if (firstConfirm) {
+      const secondConfirm = confirm('ESTA ACCIÓN ES IRREVERSIBLE. ¿Realmente deseas eliminar toda tu información ahora mismo?');
+      if (secondConfirm) {
+        localStorage.clear();
+        window.location.reload();
+      }
     }
   };
 

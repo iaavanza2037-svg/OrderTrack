@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../hooks/useStore';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Search, Filter, MessageCircle, Trash2, Edit3, Camera, X, Users, Store, ShoppingCart, Calendar, DollarSign, TrendingUp, ArrowRight, ExternalLink } from 'lucide-react';
+import { Plus, Search, Filter, MessageCircle, Trash2, Edit3, Camera, X, Users, Store, ShoppingCart, Calendar, DollarSign, TrendingUp, ArrowRight, ExternalLink, ChevronDown } from 'lucide-react';
 import { EstadoPedido, Pedido } from '../types';
 import { fileToBase64, compressImage } from '../lib/imageUtils';
 import { format } from 'date-fns';
@@ -226,44 +226,53 @@ export const PedidosPage: React.FC = () => {
 
         {showAdvancedFilters && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-4 border-t border-slate-50 animate-in slide-in-from-top-2 duration-300">
-            <div>
+            <div className="relative">
               <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Estado</label>
-              <select 
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer text-sm font-bold text-slate-700"
-                value={filterEstado}
-                onChange={(e) => setFilterEstado(e.target.value)}
-              >
-                <option value="">Todos los estados</option>
-                {Object.values(EstadoPedido).map(e => (
-                  <option key={e} value={e}>{e}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select 
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer text-sm font-bold text-slate-700 pr-10"
+                  value={filterEstado}
+                  onChange={(e) => setFilterEstado(e.target.value)}
+                >
+                  <option value="">Todos los estados</option>
+                  {Object.values(EstadoPedido).map(e => (
+                    <option key={e} value={e}>{e}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
             </div>
-            <div>
+            <div className="relative">
               <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Tienda</label>
-              <select 
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer text-sm font-bold text-slate-700"
-                value={filterTienda}
-                onChange={(e) => setFilterTienda(e.target.value)}
-              >
-                <option value="">Todas las tiendas</option>
-                {data.tiendas.map(t => (
-                  <option key={t.id} value={t.id}>{t.nombre}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select 
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer text-sm font-bold text-slate-700 pr-10"
+                  value={filterTienda}
+                  onChange={(e) => setFilterTienda(e.target.value)}
+                >
+                  <option value="">Todas las tiendas</option>
+                  {data.tiendas.map(t => (
+                    <option key={t.id} value={t.id}>{t.nombre}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
             </div>
-            <div>
+            <div className="relative">
               <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Cliente</label>
-              <select 
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer text-sm font-bold text-slate-700"
-                value={filterCliente}
-                onChange={(e) => setFilterCliente(e.target.value)}
-              >
-                <option value="">Todos los clientes</option>
-                {data.clientes.map(c => (
-                  <option key={c.id} value={c.id}>{c.nombre}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select 
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer text-sm font-bold text-slate-700 pr-10"
+                  value={filterCliente}
+                  onChange={(e) => setFilterCliente(e.target.value)}
+                >
+                  <option value="">Todos los clientes</option>
+                  {data.clientes.map(c => (
+                    <option key={c.id} value={c.id}>{c.nombre}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
             </div>
             <div>
               <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Desde</label>
@@ -315,7 +324,7 @@ export const PedidosPage: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className={`group relative bg-white rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 overflow-hidden ${statusMenuPedidoId === pedido.id ? 'z-50' : 'z-0'}`}
+                className={`group relative bg-white rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 ${statusMenuPedidoId === pedido.id ? 'z-50' : 'z-0 overflow-hidden'}`}
               >
                 <div className="p-2 h-full flex flex-col">
                   {/* Bento Header: Image & Main Info */}
@@ -362,8 +371,10 @@ export const PedidosPage: React.FC = () => {
                           }}
                           className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-sm transition-all hover:brightness-110 active:scale-[0.98] ${
                             pedido.estado === EstadoPedido.ENTREGADO ? 'bg-emerald-500 text-white' :
+                            pedido.estado === EstadoPedido.LISTO_PARA_ENTREGA ? 'bg-indigo-500 text-white' :
                             pedido.estado === EstadoPedido.CANCELADO ? 'bg-rose-500 text-white' :
                             pedido.estado === EstadoPedido.EN_TRANSITO ? 'bg-amber-500 text-white' :
+                            pedido.estado === EstadoPedido.VENCIDO ? 'bg-slate-400 text-white' :
                             'bg-blue-600 text-white'
                           }`}
                         >
@@ -374,10 +385,10 @@ export const PedidosPage: React.FC = () => {
                         <AnimatePresence>
                           {statusMenuPedidoId === pedido.id && (
                             <motion.div 
-                              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                              initial={{ opacity: 0, scale: 0.95, y: -10 }}
                               animate={{ opacity: 1, scale: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                              className="absolute left-0 bottom-full mb-2 w-full bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-[60] overflow-hidden"
+                              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                              className="absolute left-0 top-full mt-2 w-full bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-[70]"
                             >
                               <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 mb-1">
                                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Cambiar Estatus</p>
@@ -389,10 +400,10 @@ export const PedidosPage: React.FC = () => {
                                     e.stopPropagation();
                                     handleQuickStatusChange(pedido.id, estado);
                                   }}
-                                  className={`w-full text-left px-4 py-3 text-xs font-bold transition-all flex items-center justify-between border-l-4 ${
+                                  className={`w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-between border-l-4 ${
                                     pedido.estado === estado 
                                       ? 'bg-blue-50 text-blue-600 border-blue-600' 
-                                      : 'text-slate-600 hover:bg-slate-50 border-transparent hover:border-slate-200'
+                                      : 'text-slate-500 hover:bg-slate-50 border-transparent hover:border-slate-200'
                                   }`}
                                 >
                                   {estado}

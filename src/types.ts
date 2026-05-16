@@ -19,10 +19,13 @@ export enum EstadoPedido {
   PENDIENTE = "Pendiente",
   COMPRADO = "Comprado",
   EN_TRANSITO = "En tránsito",
+  EN_ADUANA = "En aduana",
   PRODUCTO_LLEGO = "Producto llegó",
+  LISTO_PARA_ENTREGA = "Listo para entrega",
   ENTREGADO = "Entregado",
   CANCELADO = "Cancelado",
   VENCIDO = "Vencido",
+  DEVUELTO = "Devuelto",
 }
 
 export interface Pedido {
