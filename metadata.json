@@ -1,6 +1,6 @@
 {
-  "name": "OrderTrack Pro",
-  "description": "Professional order management PWA with LocalStorage, WhatsApp integration, and offline support.",
+  "name": "Kardex de Pedidos Pro",
+  "description": "Gestión profesional de pedidos internacionales con sincronización en la nube, WhatsApp e informes PDF.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

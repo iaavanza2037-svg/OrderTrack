@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../hooks/useStore';
-import { Plus, Search, Filter, MessageCircle, ExternalLink, Trash2, Edit3, Camera, X, Users, Store, ShoppingCart, Package } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Plus, Search, Filter, MessageCircle, Trash2, Edit3, Camera, X, Users, Store, ShoppingCart, Calendar, DollarSign, TrendingUp, ArrowRight } from 'lucide-react';
 import { EstadoPedido, Pedido } from '../types';
 import { fileToBase64, compressImage } from '../lib/imageUtils';
 import { format } from 'date-fns';
@@ -133,7 +134,15 @@ export const PedidosPage: React.FC = () => {
       .replace('{estado}', pedido.estado)
       .replace('{fecha_llegada}', pedido.fechaLlegada || 'pronto');
 
-    const url = `https://wa.me/${cliente.telefono.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+    // Limpiar número: solo dígitos
+    let cleanedPhone = cliente.telefono.replace(/\D/g, '');
+    
+    // Si tiene 8 dígitos (formato HN), añadir 504 por defecto
+    if (cleanedPhone.length === 8) {
+      cleanedPhone = `504${cleanedPhone}`;
+    }
+
+    const url = `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
 
@@ -298,100 +307,150 @@ export const PedidosPage: React.FC = () => {
 
       {activeTab === 'pedidos' ? (
         /* Orders Grid */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPedidos.map(pedido => {
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredPedidos.map((pedido, idx) => {
             const cliente = data.clientes.find(c => c.id === pedido.clienteId);
             const tienda = data.tiendas.find(t => t.id === pedido.tiendaId);
             
             return (
-              <div key={pedido.id} className={`bento-card !p-0 hover:shadow-md transition-all group relative ${statusMenuPedidoId === pedido.id ? 'z-50' : 'z-0'}`}>
-                <div className="aspect-video relative overflow-hidden bg-slate-100 rounded-t-[16px]">
-                  {pedido.fotoBase64 ? (
-                    <img src={pedido.fotoBase64} alt={pedido.descripcion} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-300">
-                      <Camera className="w-12 h-12" />
+              <motion.div 
+                key={pedido.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className={`group relative bg-white rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 overflow-hidden ${statusMenuPedidoId === pedido.id ? 'z-50' : 'z-0'}`}
+              >
+                <div className="p-2 h-full flex flex-col">
+                  {/* Bento Header: Image & Main Info */}
+                  <div className="grid grid-cols-12 gap-2 mb-2">
+                    <div className="col-span-12 sm:col-span-5 h-48 sm:h-full min-h-[160px] relative overflow-hidden rounded-[24px] bg-slate-50">
+                      {pedido.fotoBase64 ? (
+                        <img 
+                          src={pedido.fotoBase64} 
+                          alt={pedido.descripcion} 
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-200">
+                          <ShoppingCart className="w-12 h-12" />
+                        </div>
+                      )}
+                      <div className="absolute top-3 left-3 flex flex-col gap-2">
+                         <div className="px-3 py-1.5 bg-white/90 backdrop-blur shadow-sm rounded-full text-[10px] font-black text-slate-900 border border-white/20 flex items-center gap-1.5 uppercase tracking-tighter">
+                            <Store className="w-3 h-3" /> {tienda?.nombre || 'General'}
+                         </div>
+                      </div>
                     </div>
-                  )}
-                </div>
-                
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-bold text-slate-800 line-clamp-1">{pedido.descripcion}</h3>
-                      <div className="relative mt-2">
+
+                    <div className="col-span-12 sm:col-span-7 p-4 flex flex-col justify-between bg-slate-50/50 rounded-[24px]">
+                      <div>
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-black text-slate-900 leading-tight line-clamp-2 text-lg">
+                            {pedido.descripcion}
+                          </h3>
+                        </div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-black text-blue-600">
+                            {cliente?.nombre.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-sm font-bold text-slate-600 truncate">{cliente?.nombre}</span>
+                        </div>
+                      </div>
+
+                      <div className="relative">
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
                             setStatusMenuPedidoId(statusMenuPedidoId === pedido.id ? null : pedido.id);
                           }}
-                          className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter shadow-sm transition-all hover:scale-105 active:scale-95 flex items-center gap-1 ${
+                          className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-sm transition-all hover:brightness-110 active:scale-[0.98] ${
                             pedido.estado === EstadoPedido.ENTREGADO ? 'bg-emerald-500 text-white' :
                             pedido.estado === EstadoPedido.CANCELADO ? 'bg-rose-500 text-white' :
+                            pedido.estado === EstadoPedido.CAMINO ? 'bg-amber-500 text-white' :
                             'bg-blue-600 text-white'
                           }`}
                         >
                           {pedido.estado}
-                          <Filter className="w-3 h-3 opacity-50" />
+                          <Filter className="w-3.5 h-3.5 opacity-60" />
                         </button>
 
-                        {statusMenuPedidoId === pedido.id && (
-                          <div className="absolute left-0 top-full mt-2 w-48 bg-white rounded-xl shadow-2xl border border-slate-100 py-2 z-[60] animate-in zoom-in-95 duration-200">
-                            <div className="px-4 py-1 border-b border-slate-50 mb-1">
-                              <p className="text-[9px] font-black text-slate-400 uppercase">Cambiar Estado</p>
-                            </div>
-                            {Object.values(EstadoPedido).map((estado) => (
-                              <button
-                                key={estado}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleQuickStatusChange(pedido.id, estado);
-                                }}
-                                className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-colors flex items-center justify-between ${
-                                  pedido.estado === estado ? 'bg-blue-50 text-blue-600 font-black' : 'text-slate-600 hover:bg-slate-50'
-                                }`}
-                              >
-                                {estado}
-                                {pedido.estado === estado && <div className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
-                              </button>
-                            ))}
-                          </div>
-                        )}
+                        <AnimatePresence>
+                          {statusMenuPedidoId === pedido.id && (
+                            <motion.div 
+                              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                              className="absolute left-0 bottom-full mb-2 w-full bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-[60] overflow-hidden"
+                            >
+                              <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 mb-1">
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Cambiar Estatus</p>
+                              </div>
+                              {Object.values(EstadoPedido).map((estado) => (
+                                <button
+                                  key={estado}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleQuickStatusChange(pedido.id, estado);
+                                  }}
+                                  className={`w-full text-left px-4 py-3 text-xs font-bold transition-all flex items-center justify-between border-l-4 ${
+                                    pedido.estado === estado 
+                                      ? 'bg-blue-50 text-blue-600 border-blue-600' 
+                                      : 'text-slate-600 hover:bg-slate-50 border-transparent hover:border-slate-200'
+                                  }`}
+                                >
+                                  {estado}
+                                  {pedido.estado === estado && <div className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
+                                </button>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </div>
-                    <div className="flex gap-1">
-                      <button onClick={() => openModal(pedido)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                        <Edit3 className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => { if(confirm('¿Seguro?')) deletePedido(pedido.id) }} className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
                   </div>
 
-                  <div className="space-y-2 mb-4">
-                    <p className="text-sm text-slate-500 flex items-center gap-2">
-                      <Users className="w-4 h-4" /> {cliente?.nombre || 'Cliente borrado'}
-                    </p>
-                    <p className="text-sm text-slate-500 flex items-center gap-2">
-                      <Store className="w-4 h-4" /> {tienda?.nombre || 'Tienda borrada'}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Precio Venta</p>
-                      <p className="text-lg font-bold text-slate-900">L {pedido.precioVenta.toFixed(2)}</p>
+                  {/* Bento Footer: Stats & Actions */}
+                  <div className="grid grid-cols-2 gap-2 mt-auto">
+                    <div className="p-4 bg-slate-900 rounded-[24px] flex flex-col justify-center">
+                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                        <TrendingUp className="w-3 h-3 text-emerald-400" /> Ganancia
+                      </p>
+                      <p className="text-xl font-black text-emerald-400 leading-none">L {pedido.ganancia.toLocaleString()}</p>
                     </div>
-                    <button 
-                      onClick={() => sendWhatsApp(pedido)}
-                      className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
-                    >
-                      <MessageCircle className="w-4 h-4" /> Avísar
-                    </button>
+
+                    <div className="p-4 bg-white border border-slate-100 rounded-[24px] flex flex-col justify-center">
+                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                         <DollarSign className="w-3 h-3 text-blue-600" /> Precio Venta
+                      </p>
+                      <p className="text-xl font-black text-slate-900 leading-none">L {pedido.precioVenta.toLocaleString()}</p>
+                    </div>
+
+                    <div className="col-span-2 flex items-center gap-2 p-1 bg-slate-50 rounded-[24px]">
+                      <button 
+                        onClick={() => sendWhatsApp(pedido)}
+                        className="flex-1 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white p-3 rounded-[20px] text-xs font-black transition-all active:scale-[0.98] shadow-lg shadow-emerald-200/50"
+                      >
+                        <MessageCircle className="w-4 h-4" /> 
+                        Notificar
+                      </button>
+                      <div className="flex gap-1 pr-2">
+                        <button 
+                          onClick={() => openModal(pedido)} 
+                          className="p-3 text-slate-400 hover:text-blue-600 hover:bg-white rounded-[20px] transition-all"
+                        >
+                          <Edit3 className="w-5 h-5" />
+                        </button>
+                        <button 
+                          onClick={() => { if(confirm('¿Seguro que deseas eliminar este pedido?')) deletePedido(pedido.id) }} 
+                          className="p-3 text-slate-400 hover:text-rose-600 hover:bg-white rounded-[20px] transition-all"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

@@ -15,7 +15,7 @@ import { RespaldoPage } from './pages/RespaldoPage';
 import { InformesPage } from './pages/InformesPage';
 import { ConfiguracionPage } from './pages/ConfiguracionPage';
 import { Login } from './components/Login';
-import { auth } from './lib/firebase';
+import { auth, getRedirectResult } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 
 export default function App() {
@@ -23,6 +23,11 @@ export default function App() {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
+    // Primero manejamos resultados de redirección (importante para móviles)
+    getRedirectResult(auth).catch((error) => {
+      console.error("Error en resultado de redirección:", error);
+    });
+
     return onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoadingAuth(false);

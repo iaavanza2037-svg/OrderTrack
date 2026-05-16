@@ -11,6 +11,7 @@ export const ClientesPage: React.FC = () => {
 
   const [formData, setFormData] = useState({
     nombre: '',
+    codigoPais: '+504',
     telefono: '',
     direccion: '',
     observaciones: '',
@@ -24,15 +25,20 @@ export const ClientesPage: React.FC = () => {
   const openModal = (cliente?: Cliente) => {
     if (cliente) {
       setEditingCliente(cliente);
+      // Extraer código de país (si existe, asumiendo formato +XXX...)
+      const telParts = cliente.telefono.split(' ');
+      const hasCode = cliente.telefono.startsWith('+');
+      
       setFormData({
         nombre: cliente.nombre,
-        telefono: cliente.telefono,
+        codigoPais: hasCode ? telParts[0] : '+504',
+        telefono: hasCode ? telParts.slice(1).join(' ') : cliente.telefono,
         direccion: cliente.direccion || '',
         observaciones: cliente.observaciones || '',
       });
     } else {
       setEditingCliente(null);
-      setFormData({ nombre: '', telefono: '', direccion: '', observaciones: '' });
+      setFormData({ nombre: '', codigoPais: '+504', telefono: '', direccion: '', observaciones: '' });
     }
     setIsModalOpen(true);
   };
@@ -44,10 +50,18 @@ export const ClientesPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const finalData = {
+      ...formData,
+      telefono: `${formData.codigoPais.trim()} ${formData.telefono.trim()}`.trim()
+    };
+    
+    // Quitar codigoPais del objeto final si no está en el tipo Cliente (está en formData localmente)
+    const { codigoPais, ...clienteData } = finalData;
+
     if (editingCliente) {
-      updateCliente(editingCliente.id, formData);
+      updateCliente(editingCliente.id, clienteData);
     } else {
-      addCliente(formData);
+      addCliente(clienteData);
     }
     closeModal();
   };
@@ -156,14 +170,23 @@ export const ClientesPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Teléfono / WhatsApp</label>
-                  <input 
-                    required 
-                    type="tel" 
-                    placeholder="Ej: +504 9999-9999"
-                    className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500"
-                    value={formData.telefono}
-                    onChange={e => setFormData(p => ({ ...p, telefono: e.target.value }))}
-                  />
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      placeholder="+504"
+                      className="w-24 px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-center"
+                      value={formData.codigoPais}
+                      onChange={e => setFormData(p => ({ ...p, codigoPais: e.target.value }))}
+                    />
+                    <input 
+                      required 
+                      type="tel" 
+                      placeholder="Número de celular"
+                      className="flex-1 px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500"
+                      value={formData.telefono}
+                      onChange={e => setFormData(p => ({ ...p, telefono: e.target.value }))}
+                    />
+                  </div>
                 </div>
 
                 <div>
