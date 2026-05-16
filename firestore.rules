@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Validate Cliente
+    function isValidCliente(data) {
+      return data.keys().hasAll(['nombre', 'telefono', 'fechaRegistro', 'uid']) &&
+             data.nombre is string && data.nombre.size() > 0 && data.nombre.size() <= 200 &&
+             data.telefono is string && data.telefono.size() > 0 && data.telefono.size() <= 50 &&
+             data.uid == request.auth.uid;
+    }
+
+    // Validate Tienda
+    function isValidTienda(data) {
+      return data.keys().hasAll(['nombre', 'pais', 'uid']) &&
+             data.nombre is string && data.nombre.size() > 0 && data.nombre.size() <= 200 &&
+             data.pais is string && data.pais.size() > 0 && data.pais.size() <= 100 &&
+             data.uid == request.auth.uid;
+    }
+
+    // Validate Pedido
+    function isValidPedido(data) {
+      return data.keys().hasAll(['clienteId', 'tiendaId', 'descripcion', 'precioCompra', 'precioVenta', 'estado', 'fechaCreacion', 'uid']) &&
+             data.clienteId is string && data.tiendaId is string &&
+             data.descripcion is string && data.descripcion.size() <= 1000 &&
+             data.precioCompra is number && data.precioVenta is number &&
+             data.estado is string &&
+             data.uid == request.auth.uid;
+    }
+
+    // Validate Configuracion
+    function isValidConfig(data) {
+      return data.keys().hasAll(['whatsappTemplate', 'uid']) &&
+             data.whatsappTemplate is string && data.whatsappTemplate.size() <= 2000 &&
+             data.uid == request.auth.uid;
+    }
+
+    match /users/{uid} {
+      match /clientes/{id} {
+        allow read, list: if isOwner(uid);
+        allow create: if isOwner(uid) && isValidCliente(request.resource.data) && isValidId(id);
+        allow update: if isOwner(uid) && isValidCliente(request.resource.data) && 
+                        request.resource.data.uid == resource.data.uid;
+        allow delete: if isOwner(uid);
+      }
+
+      match /tiendas/{id} {
+        allow read, list: if isOwner(uid);
+        allow create: if isOwner(uid) && isValidTienda(request.resource.data) && isValidId(id);
+        allow update: if isOwner(uid) && isValidTienda(request.resource.data) && 
+                        request.resource.data.uid == resource.data.uid;
+        allow delete: if isOwner(uid);
+      }
+
+      match /pedidos/{id} {
+        allow read, list: if isOwner(uid);
+        allow create: if isOwner(uid) && isValidPedido(request.resource.data) && isValidId(id);
+        allow update: if isOwner(uid) && isValidPedido(request.resource.data) && 
+                        request.resource.data.uid == resource.data.uid;
+        allow delete: if isOwner(uid);
+      }
+
+      match /config/{id} {
+        allow read, list: if isOwner(uid);
+        allow create, update: if isOwner(uid) && isValidConfig(request.resource.data) && isValidId(id);
+        allow delete: if isOwner(uid);
+      }
+    }
+  }
+}

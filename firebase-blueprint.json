@@ -1,0 +1,87 @@
+{
+  "entities": {
+    "Cliente": {
+      "title": "Cliente",
+      "description": "Información del cliente",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "nombre": { "type": "string" },
+        "telefono": { "type": "string" },
+        "direccion": { "type": "string" },
+        "observaciones": { "type": "string" },
+        "fechaRegistro": { "type": "string", "format": "date-time" },
+        "uid": { "type": "string" }
+      },
+      "required": ["nombre", "telefono", "fechaRegistro", "uid"]
+    },
+    "Tienda": {
+      "title": "Tienda",
+      "description": "Información de la tienda",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "nombre": { "type": "string" },
+        "pais": { "type": "string" },
+        "sitioWeb": { "type": "string" },
+        "notas": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["nombre", "pais", "uid"]
+    },
+    "Pedido": {
+      "title": "Pedido",
+      "description": "Información del pedido",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "clienteId": { "type": "string" },
+        "tiendaId": { "type": "string" },
+        "descripcion": { "type": "string" },
+        "categoria": { "type": "string" },
+        "enlaceProducto": { "type": "string" },
+        "precioCompra": { "type": "number" },
+        "precioVenta": { "type": "number" },
+        "ganancia": { "type": "number" },
+        "fechaPedido": { "type": "string" },
+        "fechaLlegada": { "type": "string" },
+        "estado": { "type": "string" },
+        "entregado": { "type": "boolean" },
+        "fotoBase64": { "type": "string" },
+        "observaciones": { "type": "string" },
+        "fechaCreacion": { "type": "string", "format": "date-time" },
+        "fechaActualizacion": { "type": "string", "format": "date-time" },
+        "uid": { "type": "string" }
+      },
+      "required": ["clienteId", "tiendaId", "descripcion", "precioCompra", "precioVenta", "estado", "fechaCreacion", "uid"]
+    },
+    "Configuracion": {
+      "title": "Configuracion",
+      "description": "Configuración del usuario",
+      "type": "object",
+      "properties": {
+        "whatsappTemplate": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["whatsappTemplate", "uid"]
+    }
+  },
+  "firestore": {
+    "users/{uid}/clientes/{id}": {
+      "schema": "Cliente",
+      "description": "Colección de clientes del usuario"
+    },
+    "users/{uid}/tiendas/{id}": {
+      "schema": "Tienda",
+      "description": "Colección de tiendas del usuario"
+    },
+    "users/{uid}/pedidos/{id}": {
+      "schema": "Pedido",
+      "description": "Colección de pedidos del usuario"
+    },
+    "users/{uid}/config/settings": {
+      "schema": "Configuracion",
+      "description": "Configuración global del usuario"
+    }
+  }
+}

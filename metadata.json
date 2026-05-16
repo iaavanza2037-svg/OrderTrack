@@ -1,0 +1,8 @@
+{
+  "name": "OrderTrack Pro",
+  "description": "Professional order management PWA with LocalStorage, WhatsApp integration, and offline support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
