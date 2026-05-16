@@ -594,134 +594,127 @@ export const PedidosPage: React.FC = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h2 className="text-xl font-bold text-slate-800">{editingPedido ? 'Editar Pedido' : 'Nuevo Pedido'}</h2>
-              <button onClick={closeModal} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-                <X className="w-6 h-6 text-slate-500" />
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl max-h-[92vh] rounded-[24px] sm:rounded-[32px] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+              <h2 className="text-lg font-bold text-slate-800 tracking-tight">{editingPedido ? 'Editar Pedido' : 'Nuevo Pedido'}</h2>
+              <button onClick={closeModal} className="p-1.5 hover:bg-slate-200 rounded-full transition-colors">
+                <X className="w-5 h-5 text-slate-500" />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="col-span-full">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Descripción del Producto</label>
-                  <input 
-                    required 
-                    type="text" 
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 border-none"
-                    value={formData.descripcion}
-                    onChange={e => setFormData(p => ({ ...p, descripcion: e.target.value }))}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Cliente</label>
-                  <select 
-                    required
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 border-none"
-                    value={formData.clienteId}
-                    onChange={e => setFormData(p => ({ ...p, clienteId: e.target.value }))}
-                  >
-                    <option value="">Selecciona un cliente</option>
-                    {data.clientes.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Tienda</label>
-                  <select 
-                    required
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 border-none"
-                    value={formData.tiendaId}
-                    onChange={e => setFormData(p => ({ ...p, tiendaId: e.target.value }))}
-                  >
-                    <option value="">Selecciona una tienda</option>
-                    {data.tiendas.map(t => <option key={t.id} value={t.id}>{t.nombre}</option>)}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Precio Compra (L)</label>
-                  <input 
-                    required 
-                    type="number" step="0.01"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 border-none"
-                    value={formData.precioCompra}
-                    onChange={e => setFormData(p => ({ ...p, precioCompra: parseFloat(e.target.value) }))}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Precio Venta (L)</label>
-                  <input 
-                    required 
-                    type="number" step="0.01"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 border-none"
-                    value={formData.precioVenta}
-                    onChange={e => setFormData(p => ({ ...p, precioVenta: parseFloat(e.target.value) }))}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Estado</label>
-                  <select 
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 border-none font-bold"
-                    value={formData.estado}
-                    onChange={e => setFormData(p => ({ ...p, estado: e.target.value as EstadoPedido }))}
-                  >
-                    {Object.values(EstadoPedido).map(e => <option key={e} value={e}>{e}</option>)}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Foto del Producto</label>
-                  <div className="flex gap-4 items-center">
-                    {formData.fotoBase64 && (
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200">
-                        <img src={formData.fotoBase64} className="w-full h-full object-cover" />
-                        <button 
-                          type="button" 
-                          onClick={() => setFormData(p => ({ ...p, fotoBase64: '' }))}
-                          className="absolute top-0 right-0 bg-rose-500 text-white p-0.5 rounded-bl-lg"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    )}
-                    <label className="flex-1 cursor-pointer bg-slate-50 border border-dashed border-slate-300 rounded-xl py-3 flex flex-col items-center justify-center hover:bg-slate-100 transition-colors">
-                      <Camera className="w-5 h-5 text-slate-400 mb-1" />
-                      <span className="text-xs text-slate-500">Subir imagen</span>
-                      <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-                    </label>
+            <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-2 custom-scrollbar">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="col-span-full">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Descripción del Producto</label>
+                    <input 
+                      required 
+                      type="text" 
+                      placeholder="Nombre del producto..."
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.descripcion}
+                      onChange={e => setFormData(p => ({ ...p, descripcion: e.target.value }))}
+                    />
                   </div>
-                </div>
 
-                <div className="col-span-full">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Observaciones</label>
-                  <textarea 
-                    rows={2}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 border-none resize-none"
-                    value={formData.observaciones}
-                    onChange={e => setFormData(p => ({ ...p, observaciones: e.target.value }))}
-                  />
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cliente</label>
+                    <select 
+                      required
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.clienteId}
+                      onChange={e => setFormData(p => ({ ...p, clienteId: e.target.value }))}
+                    >
+                      <option value="">Cliente...</option>
+                      {data.clientes.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                    </select>
+                  </div>
+
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tienda</label>
+                    <select 
+                      required
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.tiendaId}
+                      onChange={e => setFormData(p => ({ ...p, tiendaId: e.target.value }))}
+                    >
+                      <option value="">Tienda...</option>
+                      {data.tiendas.map(t => <option key={t.id} value={t.id}>{t.nombre}</option>)}
+                    </select>
+                  </div>
+
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Costo (L)</label>
+                    <input 
+                      required 
+                      type="number" step="0.01"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.precioCompra}
+                      onChange={e => setFormData(p => ({ ...p, precioCompra: parseFloat(e.target.value) }))}
+                    />
+                  </div>
+
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Venta (L)</label>
+                    <input 
+                      required 
+                      type="number" step="0.01"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.precioVenta}
+                      onChange={e => setFormData(p => ({ ...p, precioVenta: parseFloat(e.target.value) }))}
+                    />
+                  </div>
+
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Estado</label>
+                    <select 
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-bold"
+                      value={formData.estado}
+                      onChange={e => setFormData(p => ({ ...p, estado: e.target.value as EstadoPedido }))}
+                    >
+                      {Object.values(EstadoPedido).map(e => <option key={e} value={e}>{e}</option>)}
+                    </select>
+                  </div>
+
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Foto</label>
+                    <div className="flex gap-2 items-center h-[38px]">
+                      {formData.fotoBase64 && (
+                        <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-slate-200 shrink-0">
+                          <img src={formData.fotoBase64} className="w-full h-full object-cover" />
+                          <button 
+                            type="button" 
+                            onClick={() => setFormData(p => ({ ...p, fotoBase64: '' }))}
+                            className="absolute top-0 right-0 bg-rose-500 text-white p-0.5 rounded-bl-lg"
+                          >
+                            <X className="w-2 h-2" />
+                          </button>
+                        </div>
+                      )}
+                      <label className="flex-1 h-full cursor-pointer bg-slate-50 border border-dashed border-slate-300 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors">
+                        <Camera className="w-3.5 h-3.5 text-slate-400 mr-1.5" />
+                        <span className="text-[10px] text-slate-500 font-black uppercase">Subir</span>
+                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-10 flex gap-4">
+              <div className="px-5 py-3 bg-slate-50 border-t border-slate-200 flex gap-2 shrink-0">
                 <button 
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl transition-all"
+                  className="flex-1 py-2.5 px-3 bg-white border border-slate-200 text-slate-600 font-bold text-xs rounded-xl hover:bg-slate-100 active:scale-95 transition-all"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit"
-                  className="flex-[2] py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95"
+                  className="flex-[1.5] py-2.5 px-3 bg-blue-600 text-white font-black text-xs rounded-xl shadow-lg shadow-blue-100 uppercase tracking-widest active:scale-95 transition-all"
                 >
-                  {editingPedido ? 'Actualizar Cambios' : 'Registrar Pedido'}
+                  {editingPedido ? 'Guardar' : 'Crear Pedido'}
                 </button>
               </div>
             </form>

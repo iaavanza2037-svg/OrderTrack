@@ -146,83 +146,85 @@ export const ClientesPage: React.FC = () => {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h2 className="text-xl font-bold text-slate-800">{editingCliente ? 'Editar Cliente' : 'Nuevo Cliente'}</h2>
-              <button onClick={closeModal} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-                <X className="w-6 h-6 text-slate-500" />
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-lg max-h-[92vh] rounded-[24px] sm:rounded-[32px] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+              <h2 className="text-lg font-bold text-slate-800 tracking-tight">{editingCliente ? 'Editar Cliente' : 'Nuevo Cliente'}</h2>
+              <button onClick={closeModal} className="p-1.5 hover:bg-slate-200 rounded-full transition-colors">
+                <X className="w-5 h-5 text-slate-500" />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-8">
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Nombre Completo</label>
-                  <input 
-                    required 
-                    type="text" 
-                    className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500"
-                    value={formData.nombre}
-                    onChange={e => setFormData(p => ({ ...p, nombre: e.target.value }))}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Teléfono / WhatsApp</label>
-                  <div className="flex gap-2">
-                    <input 
-                      type="text" 
-                      placeholder="+504"
-                      className="w-24 px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-center"
-                      value={formData.codigoPais}
-                      onChange={e => setFormData(p => ({ ...p, codigoPais: e.target.value }))}
-                    />
+            <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-y-auto p-5 sm:p-6 pb-4 custom-scrollbar">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nombre Completo</label>
                     <input 
                       required 
-                      type="tel" 
-                      placeholder="Número de celular"
-                      className="flex-1 px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500"
-                      value={formData.telefono}
-                      onChange={e => setFormData(p => ({ ...p, telefono: e.target.value }))}
+                      type="text" 
+                      className="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.nombre}
+                      onChange={e => setFormData(p => ({ ...p, nombre: e.target.value }))}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Teléfono / WhatsApp</label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        placeholder="+504"
+                        className="w-20 px-3 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-center text-sm"
+                        value={formData.codigoPais}
+                        onChange={e => setFormData(p => ({ ...p, codigoPais: e.target.value }))}
+                      />
+                      <input 
+                        required 
+                        type="tel" 
+                        placeholder="Número de celular"
+                        className="flex-1 px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                        value={formData.telefono}
+                        onChange={e => setFormData(p => ({ ...p, telefono: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Dirección (Opcional)</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.direccion}
+                      onChange={e => setFormData(p => ({ ...p, direccion: e.target.value }))}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Observaciones</label>
+                    <textarea 
+                      rows={2}
+                      className="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                      value={formData.observaciones}
+                      onChange={e => setFormData(p => ({ ...p, observaciones: e.target.value }))}
                     />
                   </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Dirección (Opcional)</label>
-                  <input 
-                    type="text" 
-                    className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500"
-                    value={formData.direccion}
-                    onChange={e => setFormData(p => ({ ...p, direccion: e.target.value }))}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Observaciones</label>
-                  <textarea 
-                    rows={3}
-                    className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 resize-none"
-                    value={formData.observaciones}
-                    onChange={e => setFormData(p => ({ ...p, observaciones: e.target.value }))}
-                  />
-                </div>
               </div>
 
-              <div className="mt-10 flex gap-4">
+              <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3 shrink-0">
                 <button 
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl transition-all"
+                  className="flex-1 py-3 px-4 bg-white border border-slate-200 text-slate-600 font-bold text-sm rounded-xl hover:bg-slate-100 transition-all active:scale-95 shadow-sm"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit"
-                  className="flex-[2] py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95"
+                  className="flex-[2] py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-black text-sm rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-95 uppercase tracking-widest"
                 >
-                  {editingCliente ? 'Guardar Cambios' : 'Registrar Cliente'}
+                  {editingCliente ? 'Actualizar' : 'Registrar Cliente'}
                 </button>
               </div>
             </form>

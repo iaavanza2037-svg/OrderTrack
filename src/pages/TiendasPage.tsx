@@ -131,77 +131,79 @@ export const TiendasPage: React.FC = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h2 className="text-xl font-bold text-slate-800">{editingTienda ? 'Editar Tienda' : 'Nueva Tienda'}</h2>
-              <button onClick={closeModal} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-                <X className="w-6 h-6 text-slate-500" />
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-lg max-h-[92vh] rounded-[24px] sm:rounded-[32px] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+              <h2 className="text-lg font-bold text-slate-800 tracking-tight">{editingTienda ? 'Editar Tienda' : 'Nueva Tienda'}</h2>
+              <button onClick={closeModal} className="p-1.5 hover:bg-slate-200 rounded-full transition-colors">
+                <X className="w-5 h-5 text-slate-500" />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-8">
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Nombre de la Tienda</label>
-                  <input 
-                    required 
-                    type="text" 
-                    placeholder="Ej: Amazon, Shein, eBay"
-                    className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500"
-                    value={formData.nombre}
-                    onChange={e => setFormData(p => ({ ...p, nombre: e.target.value }))}
-                  />
-                </div>
+            <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-y-auto p-5 sm:p-6 pb-4 custom-scrollbar">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nombre de la Tienda</label>
+                    <input 
+                      required 
+                      type="text" 
+                      placeholder="Ej: Amazon, Shein, eBay"
+                      className="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.nombre}
+                      onChange={e => setFormData(p => ({ ...p, nombre: e.target.value }))}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">País de la Tienda</label>
-                  <input 
-                    required 
-                    type="text" 
-                    placeholder="Ej: USA, China, Honduras"
-                    className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500"
-                    value={formData.pais}
-                    onChange={e => setFormData(p => ({ ...p, pais: e.target.value }))}
-                  />
-                </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">País de la Tienda</label>
+                    <input 
+                      required 
+                      type="text" 
+                      placeholder="Ej: USA, China, Honduras"
+                      className="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.pais}
+                      onChange={e => setFormData(p => ({ ...p, pais: e.target.value }))}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Sitio Web (Opcional)</label>
-                  <input 
-                    type="text" 
-                    placeholder="www.tienda.com"
-                    className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500"
-                    value={formData.sitioWeb}
-                    onChange={e => setFormData(p => ({ ...p, sitioWeb: e.target.value }))}
-                  />
-                </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Sitio Web (Opcional)</label>
+                    <input 
+                      type="text" 
+                      placeholder="www.tienda.com"
+                      className="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+                      value={formData.sitioWeb}
+                      onChange={e => setFormData(p => ({ ...p, sitioWeb: e.target.value }))}
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Notas Rápidas</label>
-                  <textarea 
-                    rows={3}
-                    placeholder="Ej: Tiempos de entrega, políticas de retorno..."
-                    className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 resize-none"
-                    value={formData.notas}
-                    onChange={e => setFormData(p => ({ ...p, notas: e.target.value }))}
-                  />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Notas Rápidas</label>
+                    <textarea 
+                      rows={2}
+                      placeholder="Ej: Tiempos de entrega, políticas de retorno..."
+                      className="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                      value={formData.notas}
+                      onChange={e => setFormData(p => ({ ...p, notas: e.target.value }))}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-10 flex gap-4">
+              <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3 shrink-0">
                 <button 
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl transition-all"
+                  className="flex-1 py-3 px-4 bg-white border border-slate-200 text-slate-600 font-bold text-sm rounded-xl hover:bg-slate-100 transition-all active:scale-95 shadow-sm"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit"
-                  className="flex-[2] py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95"
+                  className="flex-[2] py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-black text-sm rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-95 uppercase tracking-widest"
                 >
-                  {editingTienda ? 'Guardar Cambios' : 'Registrar Tienda'}
+                  {editingTienda ? 'Actualizar' : 'Registrar Tienda'}
                 </button>
               </div>
             </form>
