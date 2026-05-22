@@ -5,6 +5,7 @@ import { Plus, Search, Filter, MessageCircle, Trash2, Edit3, Camera, X, Users, S
 import { EstadoPedido, Pedido } from '../types';
 import { fileToBase64, compressImage } from '../lib/imageUtils';
 import { format } from 'date-fns';
+import { auth } from '../lib/firebase';
 
 export const PedidosPage: React.FC = () => {
   const { data, addPedido, updatePedido, deletePedido } = useStore();
@@ -120,13 +121,16 @@ export const PedidosPage: React.FC = () => {
 
   const sendWhatsApp = (pedido: Pedido) => {
     const cliente = data.clientes.find(c => c.id === pedido.clienteId);
-    const tienda = data.tiendas.find(t => t.id === pedido.tiendaId);
     if (!cliente) return;
+
+    const tiendaUser = auth.currentUser?.email 
+      ? auth.currentUser.email.split('@')[0].toUpperCase()
+      : 'la tienda';
 
     let message = data.configuracion.whatsappTemplate
       .replace('{cliente}', cliente.nombre)
       .replace('{producto}', pedido.descripcion)
-      .replace('{tienda}', tienda?.nombre || 'la tienda')
+      .replace('{tienda}', tiendaUser)
       .replace('{precio}', pedido.precioVenta.toString())
       .replace('{estado}', pedido.estado)
       .replace('{fecha_llegada}', pedido.fechaLlegada || 'pronto');

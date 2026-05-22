@@ -28,23 +28,24 @@ export const signInWithGoogle = async () => {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   
-  // En modo PWA standalone, el redirect es obligatorio
-  if (isStandalone) {
+  // En modo PWA standalone o en dispositivos móviles, usar redirect directamente
+  // Esto evita fallos donde los navegadores móviles suspenden la pestaña original
+  // y causan que las ventanas emergentes (popups) queden congeladas o en blanco.
+  if (isStandalone || isMobile) {
     try {
       return await signInWithRedirect(auth, googleProvider);
     } catch (error) {
-      console.error("Error redirect standalone:", error);
+      console.error("Error redirect mobile/standalone:", error);
       throw error;
     }
   }
 
-  // En navegadores normales (PC o Móvil), intentamos popup primero
-  // Si falla o es bloqueado, usamos redirect como respaldo
+  // En navegadores normales de escritorio, intentamos popup primero
   try {
     return await signInWithPopup(auth, googleProvider);
   } catch (error: any) {
     console.warn("Popup blocked or failed, falling back to redirect...", error);
-    if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request' || isMobile) {
+    if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
       return await signInWithRedirect(auth, googleProvider);
     }
     throw error;

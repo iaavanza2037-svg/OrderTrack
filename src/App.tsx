@@ -23,15 +23,34 @@ export default function App() {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
-    // Primero manejamos resultados de redirección (importante para móviles)
-    getRedirectResult(auth).catch((error) => {
-      console.error("Error en resultado de redirección:", error);
-    });
+    let isMounted = true;
 
-    return onAuthStateChanged(auth, (user) => {
+    // 1. Escuchamos de inmediato el estado de autenticación.
+    // Firebase cargará la sesión persistida (IndexedDB) de inmediato sin esperas de red.
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!isMounted) return;
       setUser(user);
       setLoadingAuth(false);
     });
+
+    // 2. Procesamos el resultado del redireccionamiento de Google en segundo plano
+    // sólo en caso de que vengamos de un flujo de redirección activo.
+    getRedirectResult(auth)
+      .then((result) => {
+        if (!isMounted) return;
+        if (result?.user) {
+          setUser(result.user);
+          setLoadingAuth(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Error al cargar resultado de redirección:", error);
+      });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   if (loadingAuth) {
